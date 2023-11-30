@@ -1,4 +1,4 @@
-module quickstart
+module github.com/shohei0701/spreadsheet_go
 
 go 1.20
 
