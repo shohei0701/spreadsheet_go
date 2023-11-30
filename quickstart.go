@@ -68,36 +68,30 @@ func saveToken(path string, token *oauth2.Token) {
 }
 
 // FetchData fetches data from a Google Sheets spreadsheet.
-func FetchData(spreadsheetId, readRange string) {
+func FetchData(spreadsheetId, sheetName string) ([][]interface{}, error) {
 	ctx := context.Background()
 	b, err := os.ReadFile("credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
-
 	config, err := google.ConfigFromJSON(b, "https://www.googleapis.com/auth/spreadsheets.readonly")
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
-
 	client := GetClient(config)
-
 	srv, err := sheets.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		log.Fatalf("Unable to retrieve Sheets client: %v", err)
 	}
-
+	readRange := sheetName + "!A1:B"
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetId, readRange).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve data from sheet: %v", err)
 	}
-
 	if len(resp.Values) == 0 {
 		fmt.Println("No data found.")
 	} else {
-		fmt.Println("Name, Major:")
-		for _, row := range resp.Values {
-			fmt.Printf("%s, %s\n", row[0], row[4])
-		}
+		return resp.Values, nil
 	}
+	return nil, fmt.Errorf("No data found.")
 }
