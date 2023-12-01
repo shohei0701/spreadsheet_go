@@ -1,4 +1,4 @@
-package quickstart
+package main
 
 import (
 	"context"
@@ -93,5 +93,5 @@ func FetchData(spreadsheetId, sheetName string) ([][]interface{}, error) {
 	} else {
 		return resp.Values, nil
 	}
-	return nil, fmt.Errorf("No data found.")
+	return nil, fmt.Errorf("no data found")
 }
